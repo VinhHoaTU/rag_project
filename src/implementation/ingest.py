@@ -36,10 +36,9 @@ def fetch_documents():
             doc.metadata["doc_type"] = doc_type
             documents.append(doc)
     return documents
-fetch_documents()
 
 def create_chunks(documents):
-    text_splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=200)
+    text_splitter = RecursiveCharacterTextSplitter(chunk_size=1250, chunk_overlap=200)
     chunks = text_splitter.split_documents(documents)
     return chunks
 
