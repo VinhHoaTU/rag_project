@@ -48,16 +48,6 @@ vectorstore = OpenSearchVectorSearch(
     is_aoss=True,
 )
 
-# # def answer_question(question: str, history: list[dict] = []) -> tuple[str, list[Document]]:
- 
-#  # Ensuite ton pipeline fonctionne normalement
-# base_retriever = vectorstore.as_retriever(
-#     search_type="mmr",
-#     search_kwargs={"k": RETRIEVAL_K, "fetch_k": 10}
-# )
-
-# docs = base_retriever.invoke("qui est thomas")
-# print(docs)
 
 llm = ChatOpenAI(temperature=0, model_name=MODEL)
 
@@ -69,7 +59,6 @@ base_retriever = vectorstore.as_retriever(
 )
 
 # ── Step 2 : MultiQueryRetriever ──────────────────────────────
-# Le LLM réécrit la question en N variantes
 # chaque variante fait une recherche: résultats fusionnés + dédupliqués
 multi_query_retriever = MultiQueryRetriever.from_llm(
     retriever=base_retriever,
@@ -120,5 +109,10 @@ def answer_question(question: str, history: list[dict] = []) -> tuple[str, list[
     response = llm.invoke(messages)
     return response.content, docs
 
-question = "qui est thomas"
-print(answer_question(question))
+
+if __name__ == "__main__":
+    answer, docs = answer_question("qui est Alex Thomson")
+    print("Réponse :", answer)
+    print(f"\n{len(docs)} documents utilisés comme contexte")
+    for i, doc in enumerate(docs):
+        print(f"[{i+1}] {doc.page_content[:150]}...")
