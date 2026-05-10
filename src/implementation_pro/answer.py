@@ -51,32 +51,31 @@ vectorstore = OpenSearchVectorSearch(
 
 llm = ChatOpenAI(temperature=0, model_name=MODEL)
 
-# ── Step 1 : base retriever ────────────────────────────────────
+# ── Step 1 : base retriever
 # fetch_k large pour donner assez de candidats au MMR
 base_retriever = vectorstore.as_retriever(
     search_type="mmr",
     search_kwargs={"k": RETRIEVAL_K, "fetch_k": 30}
 )
 
-# ── Step 2 : MultiQueryRetriever ──────────────────────────────
+# ── Step 2 : MultiQueryRetriever 
 # chaque variante fait une recherche: résultats fusionnés + dédupliqués
 multi_query_retriever = MultiQueryRetriever.from_llm(
     retriever=base_retriever,
     llm=llm,
 )
 
-# ── Step 3 : Cross-encoder reranker ───────────────────────────
+# ── Step 3 : Cross-encoder reranker 
 # Rerank tous les docs récupérés par MultiQuery
 reranker_model = HuggingFaceCrossEncoder(model_name="BAAI/bge-reranker-v2-m3")
 compressor = CrossEncoderReranker(model=reranker_model, top_n=RERANKER_TOP_K)
 
-# ── Step 4 : Pipeline complet ─────────────────────────────────
+# ── Step 4 : Pipeline complet 
 # ContextualCompressionRetriever branche le reranker sur le MultiQuery
 compression_retriever = ContextualCompressionRetriever(
     base_compressor=compressor,
     base_retriever=multi_query_retriever,
 )
-
 
 def fetch_context(question: str) -> list[Document]:
     """

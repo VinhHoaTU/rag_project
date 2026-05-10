@@ -8,13 +8,15 @@ from langchain_text_splitters import RecursiveCharacterTextSplitter, CharacterTe
 from langchain_openai import OpenAIEmbeddings
 from langchain_community.document_loaders import TextLoader
 from langchain_community.vectorstores import OpenSearchVectorSearch
-from opensearchpy import OpenSearch, OpenSearchVectorSearch, RequestsHttpConnection, AWSV4SignerAuth
+from opensearchpy import OpenSearch, RequestsHttpConnection, AWSV4SignerAuth
+from langchain_core.documents import Document
 
 MODEL = "gpt-4.1-nano"
 
-KNOWLEDGE_BASE = str(Path(__file__).parent.parent / "knowledge-base")
+BUCKET_NAME = "rag-insurellm-bucket"
+S3_PREFIX = "base_de_connaissance/"  
 
-# embeddings = HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2")
+KNOWLEDGE_BASE = str(Path(__file__).parent.parent / "knowledge-base")
 
 load_dotenv(override=True)
 
@@ -27,38 +29,41 @@ credentials = session.get_credentials()
 region = "eu-west-3"
 awsauth = AWSV4SignerAuth(credentials, region, "aoss")
 
-# # Test de connexion
-# client = boto3.client("opensearchserverless", region_name="eu-west-3")
-
-# # Data access policies
-# print("=== DATA ACCESS POLICIES ===")
-# policies = client.list_access_policies(type="data")
-# for p in policies["accessPolicySummaries"]:
-#     detail = client.get_access_policy(type="data", name=p["name"])
-#     print(json.dumps(detail["accessPolicyDetail"]["policy"], indent=2))
-
-# # ✅ list_security_policies (not list_access_policies)
-# print("=== NETWORK POLICIES ===")
-# net_policies = client.list_security_policies(type="network")
-# for p in net_policies["securityPolicySummaries"]:
-#     detail = client.get_security_policy(type="network", name=p["name"])
-#     print(json.dumps(detail["securityPolicyDetail"]["policy"], indent=2))
+s3 = boto3.client("s3", region_name="eu-west-3")
 
 
-
-def fetch_documents():
-    
-    folders = glob.glob(str(Path(KNOWLEDGE_BASE) / "*")) # folders = folders of company, contracts, employee, products
+def fetch_documents_s3():
     documents = []
-    for folder in folders: # each folder
-        doc_type = os.path.basename(folder) # doc_type = ["company", "contracts", "employee", "products"]
-        loader = DirectoryLoader(
-            folder, glob="**/*.md", loader_cls=TextLoader, loader_kwargs={"encoding": "utf-8"}
-        )
-        folder_docs = loader.load()
-        for doc in folder_docs: # each document
-            doc.metadata["doc_type"] = doc_type
+    
+    paginator = s3.get_paginator("list_objects_v2")
+    pages = paginator.paginate(Bucket=BUCKET_NAME, Prefix=S3_PREFIX)
+    
+    for page in pages:
+        for obj in page.get("Contents", []):
+            key = obj["Key"]
+            
+            if not key.endswith(".md"):
+                continue
+            
+            # Lire directement le contenu sans unstructured
+            response = s3.get_object(Bucket=BUCKET_NAME, Key=key)
+            content = response["Body"].read().decode("utf-8")
+            
+            # Extraire doc_type depuis le chemin
+            relative = key.replace(S3_PREFIX, "")
+            doc_type = relative.split("/")[0]
+            
+            doc = Document(
+                page_content=content,
+                metadata={
+                    "source": f"s3://{BUCKET_NAME}/{key}",
+                    "doc_type": doc_type
+                }
+            )
             documents.append(doc)
+            print(f"Chargé : {key} (doc_type={doc_type})")
+    
+    print(f"\n {len(documents)} documents chargés depuis S3")
     return documents
 
 
@@ -78,15 +83,15 @@ def create_embeddings(chunks):
         connection_class=RequestsHttpConnection,
     )
     
-    # ✅ Supprimer l'index s'il existe
+    # Supprimer l'index s'il existe
     try:
         if os_client.indices.exists(index="rag-vector-database"):
             os_client.indices.delete(index="rag-vector-database")
-            print("🗑️ Index supprimé")
+            print(" Index supprimé")
         else:
-            print("ℹ️ Index n'existe pas encore")
+            print("Index n'existe pas encore")
     except Exception as e:
-        print(f"⚠️ Erreur suppression : {e}")
+        print(f" Erreur suppression : {e}")
 
     vectorstore = OpenSearchVectorSearch.from_documents(
         documents=chunks,   # obligatoire
@@ -103,11 +108,11 @@ def create_embeddings(chunks):
     return vectorstore
 
 if __name__ == "__main__":
-    documents = fetch_documents()
-    print(f"📄 Documents récupérés : {len(documents)}")
+    documents = fetch_documents_s3()
+    print(f"Documents récupérés : {len(documents)}")
     
     chunks = create_chunks(documents)
-    print(f"🔪 Chunks créés : {len(chunks)}")
+    print(f"Chunks créés : {len(chunks)}")
     
     create_embeddings(chunks)
-    print("✅ Ingestion complete")
+    print("Ingestion complete")
