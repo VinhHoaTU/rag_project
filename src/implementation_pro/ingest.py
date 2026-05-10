@@ -8,8 +8,7 @@ from langchain_text_splitters import RecursiveCharacterTextSplitter, CharacterTe
 from langchain_openai import OpenAIEmbeddings
 from langchain_community.document_loaders import TextLoader
 from langchain_community.vectorstores import OpenSearchVectorSearch
-from langchain_community.vectorstores import OpenSearchVectorSearch
-from opensearchpy import RequestsHttpConnection, AWSV4SignerAuth
+from opensearchpy import OpenSearch, OpenSearchVectorSearch, RequestsHttpConnection, AWSV4SignerAuth
 
 MODEL = "gpt-4.1-nano"
 
@@ -22,13 +21,11 @@ load_dotenv(override=True)
 embeddings = OpenAIEmbeddings(model="text-embedding-3-large")
 opensearch_url = "https://zsa1frfc7uvp0cjmphv7.eu-west-3.aoss.amazonaws.com"
 
-# 1. Récupérer les identifiants AWS configurés sur ton PC
+# Auth
 session = boto3.Session()
 credentials = session.get_credentials()
-region = "eu-west-3" 
-service = "aoss"     # IMPORTANT : pour Serverless c'est 'aoss', pas 'es'
+region = "eu-west-3"
 awsauth = AWSV4SignerAuth(credentials, region, "aoss")
-
 
 # # Test de connexion
 # client = boto3.client("opensearchserverless", region_name="eu-west-3")
@@ -103,18 +100,7 @@ def create_embeddings(chunks):
         is_aoss=True,
         timeout=60,       # obligatoire (si timeout trop court, erreur 408)
     )
-# # Test de recherche de similarité
-#     query = "Quelle est l'information principale de mon document ?"
-#     docs = vectorstore.similarity_search(query, k=3)
-
-#     for i, doc in enumerate(docs):
-#         print(f"\n--- Résultat {i+1} ---")
-#         print(f"Contenu : {doc.page_content[:200]}...") # Affiche les 200 premiers caractères
-#         print(f"Source : {doc.metadata.get('source')}")
-
     return vectorstore
-
-
 
 if __name__ == "__main__":
     documents = fetch_documents()
