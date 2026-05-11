@@ -11,6 +11,7 @@ from langchain_community.vectorstores import OpenSearchVectorSearch
 from opensearchpy import OpenSearch, RequestsHttpConnection, AWSV4SignerAuth
 from langchain_core.documents import Document
 
+
 MODEL = "gpt-4.1-nano"
 
 BUCKET_NAME = "rag-insurellm-bucket"
@@ -106,6 +107,7 @@ def create_embeddings(chunks):
         timeout=60,       # obligatoire (si timeout trop court, erreur 408)
     )
     return vectorstore
+
 
 if __name__ == "__main__":
     documents = fetch_documents_s3()
