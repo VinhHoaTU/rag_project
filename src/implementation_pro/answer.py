@@ -36,7 +36,7 @@ credentials = session.get_credentials()
 region = "eu-west-3"
 awsauth = AWSV4SignerAuth(credentials, region, "aoss")
 
-# ✅ Connexion à l'index existant (pas de from_documents)
+# Connexion à l'index existant (pas de from_documents)
 vectorstore = OpenSearchVectorSearch(
     opensearch_url="https://zsa1frfc7uvp0cjmphv7.eu-west-3.aoss.amazonaws.com",
     index_name="rag-vector-database",
