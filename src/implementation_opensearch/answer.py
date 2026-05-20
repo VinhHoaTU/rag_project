@@ -1,4 +1,4 @@
-import boto3
+import boto3, os
 from pathlib import Path
 from dotenv import load_dotenv
 from langchain_openai import ChatOpenAI, OpenAIEmbeddings
@@ -15,6 +15,8 @@ from opensearchpy import RequestsHttpConnection, AWSV4SignerAuth
 MODEL = "gpt-4.1-nano"
 
 load_dotenv(override=True)
+
+opensearch_url = os.getenv("OPENSEARCH_URL")
 
 embeddings = OpenAIEmbeddings(model="text-embedding-3-large")
 
@@ -38,7 +40,7 @@ awsauth = AWSV4SignerAuth(credentials, region, "aoss")
 
 # Connexion à l'index existant (pas de from_documents)
 vectorstore = OpenSearchVectorSearch(
-    opensearch_url="https://zsa1frfc7uvp0cjmphv7.eu-west-3.aoss.amazonaws.com",
+    opensearch_url=opensearch_url,
     index_name="rag-vector-database",
     embedding_function=embeddings,  # nécessaire pour embedder les questions
     http_auth=awsauth,

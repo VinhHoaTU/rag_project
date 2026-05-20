@@ -21,8 +21,8 @@ KNOWLEDGE_BASE = str(Path(__file__).parent.parent / "knowledge-base")
 
 load_dotenv(override=True)
 
+opensearch_url = os.getenv("OPENSEARCH_URL")
 embeddings = OpenAIEmbeddings(model="text-embedding-3-large")
-opensearch_url = "https://zsa1frfc7uvp0cjmphv7.eu-west-3.aoss.amazonaws.com"
 
 # Auth
 session = boto3.Session()
