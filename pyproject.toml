@@ -52,5 +52,6 @@ dependencies = [
     "boto3",
     "opensearch-py",
     "requests-aws4auth >= 1.2.3",
-    "langchain-core"
+    "langchain-core",
+    "langchain-pinecone"
 ]

@@ -11,6 +11,7 @@ from langchain_classic.retrievers.contextual_compression import ContextualCompre
 from langchain_community.cross_encoders import HuggingFaceCrossEncoder
 from langchain_community.vectorstores import OpenSearchVectorSearch
 from opensearchpy import RequestsHttpConnection, AWSV4SignerAuth
+from langchain_pinecone import PineconeVectorStore
 
 MODEL = "gpt-4.1-nano"
 
