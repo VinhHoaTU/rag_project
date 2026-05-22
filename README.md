@@ -7,7 +7,7 @@ An enterprise-grade **Retrieval-Augmented Generation (RAG)** system designed to 
 ## 🚀 Key Features
 
 *   **Multi-Domain Knowledge Base:** Seamlessly handles diverse document types (Corporate culture, legal client contracts, HR directories, and technical product specs).
-*   **Hybrid Storage & Search:** Knowledge base hosted on **AWS S3** and indexed into **AWS OpenSearch** for high-performance vector and keyword retrieval.
+*   **Hybrid Storage & Search: Initially architected with a knowledge base hosted on **AWS S3** and indexed via **AWS OpenSearch** for hybrid vector and keyword retrieval. The system was subsequently migrated to **Pinecone** to optimize infrastructure costs, reduce operational overhead, and maintain high-performance retrieval.
 *   **Granular Metadata Tracking:** Automated extraction of document attributes (e.g., `doc_type`) to filter and contextualize search results.
 *   **Rigorous Retrieval Evaluation:** Search performance is quantitatively measured using **MRR**, **nDCG**, and **Keyword Coverage**.
 *   **LLM-as-a-Judge Evaluation:** Generative answers are automatically audited for quality across **Accuracy**, **Completeness**, and **Relevance**.
@@ -19,7 +19,7 @@ An enterprise-grade **Retrieval-Augmented Generation (RAG)** system designed to 
 
 *   **Orchestration:** LangChain / Python
 *   **Cloud Storage:** AWS S3
-*   **Vector Database:** AWS OpenSearch
+*   **Vector Database:** AWS OpenSearch/ Pinecone
 *   **User Interface:** Gradio
 
 ---
@@ -28,7 +28,7 @@ An enterprise-grade **Retrieval-Augmented Generation (RAG)** system designed to 
 
 1.  **Ingestion:** Raw company documents (`.md`) are uploaded to designated prefixes in an **AWS S3** bucket (`documents/`).
 2.  **Processing & Embedding:** A data pipeline fetches files, extracts metadata (`doc_type` based on directory structures), splits them into semantic chunks using a text splitter, and generates vector embeddings.
-3.  **Indexing:** Chunked data and corresponding metadata are upserted into **AWS OpenSearch**.
+3.  **Indexing:** Chunked data and corresponding metadata are upserted into **AWS OpenSearch**/ **Pinecone**.
 4.  **Retrieval & Generation:** When a user asks a question via the **Gradio UI**, OpenSearch retrieves the most relevant chunks. The LLM synthesizes these chunks into a final answer.
 
 ---
