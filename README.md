@@ -32,24 +32,26 @@ This project uses **`uv`** for ultra-fast dependency management. Make sure you h
 curl -fsSL https://astral.sh/uv/install.sh
 ```
 
-## 1. Clone the Repository
+### 1. Clone the Repository
 
 ```bash
 git clone https://github.com/VinhHoaTU/rag_project.git
 cd rag_project
 ```
 
-## 2. Environment Setup
+### 2. Environment Setup
 
 Create a `.env` file at the root of the project and add your API keys:
 
 ```
+python -m venv .venv
+source .venv/bin/activate
 OPENAI_API_KEY="your_openai_api_key"
 # Required only if you switch to the cloud deployment mode:
 PINECONE_API_KEY="your_pinecone_api_key"
 ```
 
-## 3. Install Dependencies & Build Local Database
+### 3. Install Dependencies & Build Local Database
 
 Sync your virtual environment and run the ingestion pipeline to parse local documents, generate embeddings, and build your database:
 
@@ -61,11 +63,20 @@ uv sync
 uv run src/implementation/ingest.py
 ```
 
-## 4. Launch the Chatbot Application
+### 4. Launch the Chatbot Application
 
 Run the Gradio application interface locally:
 
 ```bash
 # Launch the application interface
-uv run src/implementation_pinecone/app.py
+uv run src/app.py
+```
+
+### 5. Launch the Chatbot Evaluation (optional)
+
+Run the Gradio application interface locally:
+
+```bash
+# Launch the application interface
+uv run src/evaluator.py
 ```
