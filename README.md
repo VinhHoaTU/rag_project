@@ -74,7 +74,7 @@ uv run src/app.py
 
 ### 5. Launch the Chatbot Evaluation (optional)
 
-Run the Gradio application interface locally:
+Run the Gradio application to evaluate the performance of the model's retrivals and answers:
 
 ```bash
 # Launch the application interface
