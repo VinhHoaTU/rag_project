@@ -51,7 +51,7 @@ def create_chunks(documents):
 def create_embeddings(chunks):
 
     vectorstore = PineconeVectorStore.from_documents(
-        documents=chunks, # Tes morceaux de texte existants
+        documents=chunks, 
         embedding=embeddings,
         index_name=index_name
     )     
