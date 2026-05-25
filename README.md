@@ -1,6 +1,8 @@
 # 📥 Enterprise RAG Chatbot
 
-An enterprise-grade **Retrieval-Augmented Generation (RAG)** system designed to act as an internal knowledge assistant. This chatbot securely ingests, indexes, and retrieves sensitive corporate data (client contracts, HR directories, product documentation) to provide accurate, context-aware answers via an interactive interface.
+An enterprise-grade **Retrieval-Augmented Generation (RAG)** system designed to act as an internal knowledge assistant (client contracts, HR directories, product documentation)
+
+---
 
 ### 🏛️ Architectural Evolution & Strategy
 To demonstrate advanced cloud-native patterns and dual-environment deployment, this project was architected to support two distinct operational modes:
@@ -12,41 +14,58 @@ To demonstrate advanced cloud-native patterns and dual-environment deployment, t
 
 This project serves as an end-to-end demonstration of Production AI Engineering, structured around 6 core technical pillars:
 
-* **Data Lake Ingestion:** Building an automated pipeline to ingest multi-domain corporate documents (`.md`) from a structured file system.
-* **Semantic Chunking:** Implementing smart text-splitting to maintain context boundaries and automate granular metadata tracking (e.g., `doc_type`, `source`).
-* **Vector Embedding:** Transforming textual data into high-dimensional vectors (3072-dim) using OpenAI embedding models.
-* **Vector Database Management:** Indexing, configuration, and scaling vector upserts within **ChomaDB** (**AWS OpenSearch** and **Pinecone** in cloud version).
-* **Dual-Stage Evaluation (LLM-as-a-Judge):** * *Retrieval Quality:* Benchmarked via **MRR** (Mean Reciprocal Rank) and **nDCG** (Normalized Discounted Cumulative Gain) metrics.
-    * *Generation Quality:* Automated auditing across **Accuracy** (Faithfulness), **Completeness**, and **Relevance**.
-* **Application Deployment:** Designing and serving a production-ready chatbot web interface using **Gradio**.
+* **Data Lake Ingestion:** AWS S3
+* **Semantic Chunking:** Recursive
+* **Vector Embedding:** text-embedding-3-large
+* **Vector Database Management:** ChomaDB (AWS OpenSearch and Pinecone for cloud version).
+* **Dual-Stage Evaluation (LLM-as-a-Judge):** Benchmarked via MRR (Mean Reciprocal Rank) and nDCG (Normalized Discounted Cumulative Gain) metrics.
+    * *Generation Quality:* Automated auditing across Accuracy (Faithfulness), Completeness and Relevance.
+* **Application Deployment:** Gradio.
+
 
 ---
-
-## 🛠️ Tech Stack
-
-* **Orchestration & Framework:** LangChain / Python
-* **Package Management:** `uv` (Fast Python package installer)
-* **Vector Database:** Pinecone / AWS OpenSearch
-* **LLM & Embeddings:** OpenAI (`gpt-4o` / `text-embedding-3-large`)
-* **User Interface:** Gradio
-
----
-
 ## ⚙️ Setup Instructions
 
-This project uses **`uv`** for ultra-fast dependency management. Make sure you have it installed (`curl -fsSL https://astral.sh/uv/install.sh`).
+This project uses **`uv`** for ultra-fast dependency management. Make sure you have it installed:
 
 ```bash
-1. Clone the Repository
-git clone [https://github.com/VinhHoaTU/rag_project.git](https://github.com/VinhHoaTU/rag_project.git)
+curl -fsSL https://astral.sh/uv/install.sh
+```
+
+## 1. Clone the Repository
+
+```bash
+git clone https://github.com/VinhHoaTU/rag_project.git
 cd rag_project
+```
 
-2. Environment Setup
-python -m venv .venv
+## 2. Environment Setup
+
+Create a `.env` file at the root of the project and add your API keys:
+
+```
 OPENAI_API_KEY="your_openai_api_key"
+# Required only if you switch to the cloud deployment mode:
+PINECONE_API_KEY="your_pinecone_api_key"
+```
 
-3. Install Dependencies & Build Local DatabaseBash
+## 3. Install Dependencies & Build Local Database
+
+Sync your virtual environment and run the ingestion pipeline to parse local documents, generate embeddings, and build your database:
+
+```bash
+# Sync dependencies and automatically create the virtual environment (.venv)
 uv sync
-uv run src/implementation/ingest.py
 
-4. Launch the Chatbot Application
+# Run the ingestion script
+uv run src/implementation/ingest.py
+```
+
+## 4. Launch the Chatbot Application
+
+Run the Gradio application interface locally:
+
+```bash
+# Launch the application interface
+uv run src/implementation_pinecone/app.py
+```
