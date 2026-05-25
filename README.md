@@ -72,7 +72,7 @@ Run the Gradio application interface locally:
 uv run src/app.py
 ```
 
-### 5. Launch the Chatbot Evaluation (optional)
+### 5. Launch the model's Evaluation (optional)
 
 Run the Gradio application to evaluate the performance of the model's retrivals and answers:
 
