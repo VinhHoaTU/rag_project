@@ -2,14 +2,11 @@
 
 An enterprise-grade **Retrieval-Augmented Generation (RAG)** system designed to act as an internal knowledge assistant (client contracts, HR directories, product documentation)
 
----
+<p align="center">
+  <img src="assets/chatbot_UI.png" alt="chatbot_UI" />
+</p>
 
-### 🏛️ Architectural Evolution & Strategy
-To demonstrate advanced cloud-native patterns and dual-environment deployment, this project was architected to support two distinct operational modes:
-1. **Local & Zero-Config Evaluation:** Local testing without third-party API dependencies, the system can be fully run locally using an embedded **ChromaDB** instance.
-2. **Production & Enterprise Scale:** Initially deployed using an **AWS S3** data lake coupled with **AWS OpenSearch Serverless** for high-throughput hybrid retrieval. The cloud vector storage was later migrated to **Pinecone** as part of a **FinOps (Cost Optimization)** initiative, significantly reducing operational overhead and cloud spend while maintaining sub-second retrieval performance.
 ---
-
 ## 🎯 The Mission
 
 This project serves as an end-to-end demonstration of Production AI Engineering, structured around 6 core technical pillars:
@@ -18,10 +15,32 @@ This project serves as an end-to-end demonstration of Production AI Engineering,
 * **Semantic Chunking:** Recursive
 * **Vector Embedding:** text-embedding-3-large
 * **Vector Database Management:** ChomaDB (AWS OpenSearch and Pinecone for cloud version).
-* **Dual-Stage Evaluation (LLM-as-a-Judge):** Benchmarked via MRR (Mean Reciprocal Rank) and nDCG (Normalized Discounted Cumulative Gain) metrics.
+* **Dual-Stage Evaluation (LLM-as-a-Judge):** 
+    * *Retrival Quality:* MRR (Mean Reciprocal Rank) and nDCG (Normalized Discounted Cumulative Gain) metrics.
     * *Generation Quality:* Automated auditing across Accuracy (Faithfulness), Completeness and Relevance.
 * **Application Deployment:** Gradio.
 
+---
+## 📊 Dataset & Evaluation Schema
+### 1. Knowledge Base (Target Corpus)
+The internal unstructured knowledge base comprises multi-domain Markdown documents partitioned across 4 core corporate pillars:
+* **Company:** 
+* **Contracts:** 
+* **Employees:** 
+* **Products:**
+
+| Attribute | Purpose |
+| :--- | :--- |
+| **Question** | The raw user query injected into the RAG pipeline. |
+| **Target Keywords** | Domain-specific terminology expected within the retrieved context to calculate keyword coverage. |
+| **Ideal Answer** | The ground-truth reference baseline. |
+| **Information Category** | (direct_fact, comparative, temporal, numerical, spanning, relationship, holistic) |
+
+---
+## 🏛️ Architectural Evolution & Strategy
+To demonstrate advanced cloud-native patterns and dual-environment deployment, this project was architected to support two distinct operational modes:
+1. **Local & Zero-Config Evaluation:** Local testing without third-party API dependencies, the system can be fully run locally using an embedded **ChromaDB** instance.
+2. **Production & Enterprise Scale:** Initially deployed using an **AWS S3** data lake coupled with **AWS OpenSearch Serverless** for high-throughput hybrid retrieval. The cloud vector storage was later migrated to **Pinecone** as part of a **FinOps (Cost Optimization)** initiative, significantly reducing operational overhead and cloud spend while maintaining sub-second retrieval performance.
 
 ---
 ## ⚙️ Setup Instructions
