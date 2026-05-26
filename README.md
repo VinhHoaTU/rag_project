@@ -29,6 +29,9 @@ The internal unstructured knowledge base comprises multi-domain Markdown documen
 * **Employees** 
 * **Products**
 
+### 2. Evaluation Dataset 
+To benchmark generative accuracy, a curated **Golden Dataset** was engineered, structured as follows:
+
 | Attribute | Purpose |
 | :--- | :--- |
 | **Question** | The raw user query injected into the RAG pipeline. |
