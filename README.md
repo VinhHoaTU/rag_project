@@ -1,4 +1,4 @@
-# 📥 Enterprise RAG Chatbot
+# 📥 Enterprise Conversational RAG Chatbot
 
 An enterprise-grade **Retrieval-Augmented Generation (RAG)** system designed to act as an internal knowledge assistant (client contracts, HR directories, product documentation)
 
@@ -69,11 +69,9 @@ Create a `.env` file at the root of the project and add your API keys:
 python -m venv .venv
 source .venv/bin/activate
 OPENAI_API_KEY="your_openai_api_key"
-# Required only if you switch to the cloud deployment mode:
-PINECONE_API_KEY="your_pinecone_api_key"
 ```
 
-### 3. Install Dependencies & Build Local Database
+### 3. Install Dependencies & Build Local Vector Database
 
 Sync your virtual environment and run the ingestion pipeline to parse local documents, generate embeddings, and build your database:
 
