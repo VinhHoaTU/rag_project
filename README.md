@@ -24,10 +24,10 @@ This project serves as an end-to-end demonstration of Production AI Engineering,
 ## 📊 Dataset & Evaluation Schema
 ### 1. Knowledge Base (Target Corpus)
 The internal unstructured knowledge base comprises multi-domain Markdown documents partitioned across 4 core corporate pillars:
-* **Company:** 
-* **Contracts:** 
-* **Employees:** 
-* **Products:**
+* **Company** 
+* **Contracts** 
+* **Employees** 
+* **Products**
 
 | Attribute | Purpose |
 | :--- | :--- |
